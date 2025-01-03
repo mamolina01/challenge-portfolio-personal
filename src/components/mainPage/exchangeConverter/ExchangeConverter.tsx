@@ -6,6 +6,7 @@ import { formatDate } from '@/utils'
 import { Input, Select, CurrencyLoading, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui'
 import Image from 'next/image'
 import switchCurrency from '@/public/switchCurrency.png'
+import { toast } from 'sonner'
 
 interface Props {
   currencies: Currencies
@@ -41,7 +42,11 @@ export const ExchangeConverter = ({ currencies, exchangeState, setExchangeState 
       })
 
       setLastUpdated(formatDate(exchangeFromCurrency.date))
-    } catch (error) {}
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) {
+      toast.error('Something went wrong')
+    }
     setIsLoading(false)
   }, [exchangeState.fromCurrency, exchangeState.toCurrency])
 
