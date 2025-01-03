@@ -1,7 +1,7 @@
 'use client'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Currencies } from '@/interfaces/Currencies'
-import { ExchangeProps, GetExchangeResponse } from '@/interfaces'
+import { ExchangeProps, GetExchangesResponse } from '@/interfaces'
 import { formatDate, getLink } from '@/utils'
 import { Input, Select, CurrencyLoading, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui'
 import Image from 'next/image'
@@ -29,20 +29,16 @@ export const ExchangeConverter = ({ currencies, exchangeState, setExchangeState 
     try {
       setIsLoading(true)
       setLastUpdated(null)
-      const exchangeFromCurrency: GetExchangeResponse = await fetch(
-        `/api/get-exchange?currency=${exchangeState.fromCurrency}`
-      ).then(data => data.json())
-
-      const exchangeToCurrency: GetExchangeResponse = await fetch(
-        `/api/get-exchange?currency=${exchangeState.toCurrency}`
+      const { fromCurrencyResponse, toCurrencyResponse }: GetExchangesResponse = await fetch(
+        `/api/get-exchange?from-currency=${exchangeState.fromCurrency}&to-currency=${exchangeState.toCurrency}`
       ).then(data => data.json())
 
       setCurrencyExchange({
-        firstCurrency: `${exchangeFromCurrency.rates[exchangeState.toCurrency]}`,
-        secondCurrency: `${exchangeToCurrency.rates[exchangeState.fromCurrency]}`
+        firstCurrency: `${fromCurrencyResponse.rates[exchangeState.toCurrency]}`,
+        secondCurrency: `${toCurrencyResponse.rates[exchangeState.fromCurrency]}`
       })
 
-      setLastUpdated(formatDate(exchangeFromCurrency.date))
+      setLastUpdated(formatDate(fromCurrencyResponse.date))
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {

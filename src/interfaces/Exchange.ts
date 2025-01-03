@@ -4,8 +4,13 @@ export interface ExchangeProps {
   toCurrency: string
 }
 
-export interface GetExchangeResponse {
+export interface ExchangeResponse {
   date: string
   base: string
   rates: { [key: string]: number }
+}
+
+export interface GetExchangesResponse {
+  fromCurrencyResponse: ExchangeResponse
+  toCurrencyResponse: ExchangeResponse
 }
