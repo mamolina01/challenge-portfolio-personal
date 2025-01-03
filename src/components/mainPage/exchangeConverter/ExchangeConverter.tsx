@@ -2,11 +2,12 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { Currencies } from '@/interfaces/Currencies'
 import { ExchangeProps, GetExchangeResponse } from '@/interfaces'
-import { formatDate } from '@/utils'
+import { formatDate, getLink } from '@/utils'
 import { Input, Select, CurrencyLoading, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui'
 import Image from 'next/image'
 import switchCurrency from '@/public/switchCurrency.png'
 import { toast } from 'sonner'
+import Link from 'next/link'
 
 interface Props {
   currencies: Currencies
@@ -77,7 +78,7 @@ export const ExchangeConverter = ({ currencies, exchangeState, setExchangeState 
   }
 
   return (
-    <div className="bg-white p-4 lg:p-10 lg:pb-4 rounded-lg h-max flex flex-col gap-6 lg:gap-0 shadow-lg max-w-[311px] w-full lg:max-w-[1126px]">
+    <div className="bg-white p-4 lg:p-10 lg:pb-4 rounded-lg h-max flex flex-col gap-6 lg:gap-0 shadow-lg w-full max-w-[311px] lg:max-w-[1126px]">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div className="flex flex-col gap-2">
           <label htmlFor="amount" className="font-semibold">
@@ -147,7 +148,7 @@ export const ExchangeConverter = ({ currencies, exchangeState, setExchangeState 
                 {currencies[exchangeState.toCurrency].name}
               </span>
             </div>
-            <span className="text-neutral-400">
+            <span className="text-[#757575]">
               1 {exchangeState.toCurrency} ={' '}
               {Number(currencyExchange.secondCurrency).toLocaleString(undefined, {
                 minimumFractionDigits: 0,
@@ -158,16 +159,21 @@ export const ExchangeConverter = ({ currencies, exchangeState, setExchangeState 
           </div>
         )}
         <div className="flex flex-col gap-4 justify-end self-end lg:mt-28">
-          <div className="bg-light-blue p-5 w-[518px] rounded-lg hidden lg:block">
-            <span className="text-sm">
+          <div className="bg-light-blue px-6 py-4 w-[518px] rounded-lg hidden lg:block">
+            <span className="text-sm leading-9">
               We use the mid-market rate for our Converter. This is for informational purposes only. You won’t receive
               this rate when sending money.
             </span>
           </div>
           <p className="text-xs self-end text-wrap">
-            <span className="underline">{currencies[exchangeState.fromCurrency].name}</span> to{' '}
-            <span className="underline">{currencies[exchangeState.toCurrency].name}</span> conversion{' '}
-            {lastUpdated !== null && <>- Last updated {lastUpdated}</>}
+            <Link href={getLink(exchangeState.fromCurrency, currencies)} className="underline">
+              {currencies[exchangeState.fromCurrency].name}
+            </Link>{' '}
+            to{' '}
+            <Link href={getLink(exchangeState.toCurrency, currencies)} className="underline">
+              {currencies[exchangeState.toCurrency].name}
+            </Link>{' '}
+            conversion {lastUpdated !== null && <>- Last updated {lastUpdated}</>}
           </p>
         </div>
       </div>
