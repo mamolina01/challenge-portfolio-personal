@@ -1,5 +1,5 @@
 'use client'
-import { Input } from '@/components/ui'
+import { Input, Select } from '@/components/ui'
 import Image from 'next/image'
 import React from 'react'
 import switchCurrency from '@/public/switchCurrency.png'
@@ -18,14 +18,22 @@ export const ExchangeConverter = () => {
           <label htmlFor="from" className="font-semibold">
             From
           </label>
-          <Input id="from" />
+          <Select id="from">
+            <option value="option1">Opción 1</option>
+            <option value="option2">Opción 2</option>
+            <option value="option3">Opción 3</option>
+          </Select>
         </div>
-        <Image src={switchCurrency} alt="switchCurrency" />
+        <Image src={switchCurrency} alt="switchCurrency" className="cursor-pointer" />
         <div className="flex flex-col gap-2">
           <label htmlFor="to" className="font-semibold">
             To
           </label>
-          <Input id="to" />
+          <Select id="to">
+            <option value="option1">Opción 1</option>
+            <option value="option2">Opción 2</option>
+            <option value="option3">Opción 3</option>
+          </Select>
         </div>
       </div>
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 lg:gap-10">
