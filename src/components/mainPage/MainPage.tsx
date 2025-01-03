@@ -9,9 +9,9 @@ interface Props {
 
 export const MainPage = ({ currencies }: Props) => {
   const [exchangeState, setExchangeState] = useState<ExchangeProps>({
-    amount: '100',
-    fromCurrency: 'EUR',
-    toCurrency: 'USD'
+    amount: '1',
+    fromCurrency: 'USD',
+    toCurrency: 'EUR'
   })
 
   if (currencies === null) return <p>Something went wrong</p>

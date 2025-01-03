@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { Currencies } from '@/interfaces/Currencies'
 import { ExchangeProps, GetExchangeResponse } from '@/interfaces'
 import { formatDate } from '@/utils'
-import { Input, Select, CurrencyLoading } from '@/components/ui'
+import { Input, Select, CurrencyLoading, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui'
 import Image from 'next/image'
 import switchCurrency from '@/public/switchCurrency.png'
 
@@ -60,6 +60,17 @@ export const ExchangeConverter = ({ currencies, exchangeState, setExchangeState 
     })
   }
 
+  const handleInput = (value: string) => {
+    if (isNaN(Number(value))) return
+
+    if (Number(value) < 0 || value === '') {
+      updateState({ amount: '0' })
+      return
+    }
+
+    updateState({ amount: value })
+  }
+
   return (
     <div className="bg-white p-4 lg:p-10 lg:pb-4 rounded-lg h-max flex flex-col gap-6 lg:gap-0 shadow-lg max-w-[311px] w-full lg:max-w-[1126px]">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
@@ -67,22 +78,23 @@ export const ExchangeConverter = ({ currencies, exchangeState, setExchangeState 
           <label htmlFor="amount" className="font-semibold">
             Amount
           </label>
-          <Input id="amount" value={exchangeState.amount} onChange={e => updateState({ amount: e.target.value })} />
+          <Input id="amount" type="number" value={exchangeState.amount} onChange={e => handleInput(e.target.value)} />
         </div>
         <div className="flex flex-col gap-2">
           <label htmlFor="from" className="font-semibold">
             From
           </label>
-          <Select
-            id="from"
-            value={exchangeState.fromCurrency}
-            onChange={e => updateState({ fromCurrency: e.target.value })}
-          >
-            {Object.entries(currencies).map(([code, currencyCode]) => (
-              <option value={code} key={code} disabled={exchangeState.toCurrency === code}>
-                {currencyCode.name}
-              </option>
-            ))}
+          <Select value={exchangeState.fromCurrency} onValueChange={value => updateState({ fromCurrency: value })}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {Object.entries(currencies).map(([code, currencyCode]) => (
+                <SelectItem className="capitalize" value={code} key={code} disabled={exchangeState.toCurrency === code}>
+                  {currencyCode.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
           </Select>
         </div>
         <Image src={switchCurrency} alt="switchCurrency" className="cursor-pointer" onClick={switchCurrencies} />
@@ -90,12 +102,22 @@ export const ExchangeConverter = ({ currencies, exchangeState, setExchangeState 
           <label htmlFor="to" className="font-semibold">
             To
           </label>
-          <Select id="to" value={exchangeState.toCurrency} onChange={e => updateState({ toCurrency: e.target.value })}>
-            {Object.entries(currencies).map(([code, currencyCode]) => (
-              <option value={code} key={code} disabled={exchangeState.fromCurrency === code}>
-                {currencyCode.name}
-              </option>
-            ))}
+          <Select value={exchangeState.toCurrency} onValueChange={value => updateState({ toCurrency: value })}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {Object.entries(currencies).map(([code, currencyCode]) => (
+                <SelectItem
+                  className="capitalize"
+                  value={code}
+                  key={code}
+                  disabled={exchangeState.fromCurrency === code}
+                >
+                  {currencyCode.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
           </Select>
         </div>
       </div>
@@ -106,11 +128,15 @@ export const ExchangeConverter = ({ currencies, exchangeState, setExchangeState 
           <div className="flex flex-col gap-2">
             <div className="flex flex-col">
               <span className="text-2xl lg:text-[32px] font-semibold">
-                {exchangeState.amount} {currencies[exchangeState.fromCurrency].name} =
+                {Number(exchangeState.amount).toLocaleString(undefined, {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 5
+                })}{' '}
+                {currencies[exchangeState.fromCurrency].name} =
               </span>
               <span className="text-2xl lg:text-[32px] font-semibold">
                 {(Number(currencyExchange.firstCurrency) * Number(exchangeState.amount)).toLocaleString(undefined, {
-                  minimumFractionDigits: 0,
+                  minimumFractionDigits: 2,
                   maximumFractionDigits: 5
                 })}{' '}
                 {currencies[exchangeState.toCurrency].name}
